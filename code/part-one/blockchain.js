@@ -81,16 +81,17 @@ class Blockchain {
    *   - blocks: an array of blocks, starting with one genesis block
    */
   constructor() {
-    // Your code here
-
+    this.blocks = [{
+      previousHash: null,
+      transactions: [],
+    }];
   }
 
   /**
    * Simply returns the last block added to the chain.
    */
   getHeadBlock() {
-    // Your code here
-
+    return this.blocks[this.blocks.length - 1];
   }
 
   /**
@@ -98,8 +99,9 @@ class Blockchain {
    * adding it to the chain.
    */
   addBlock(transactions) {
-    // Your code here
-
+    this.blocks.push(
+      new Block(transactions, this.getHeadBlock().hash)
+    );
   }
 
   /**
@@ -112,8 +114,12 @@ class Blockchain {
    *   we make the blockchain mineable later.
    */
   getBalance(publicKey) {
-    // Your code here
-
+    return this.blocks.reduce((sum, {transactions}) => (
+      sum + transactions.reduce((sum, {recipient, source, amount}) => (
+        sum + (recipient === publicKey ? amount : 0)
+            - (source === publicKey ? amount : 0)
+      ), 0)
+    ), 0);
   }
 }
 

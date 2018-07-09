@@ -46,8 +46,8 @@ class Block {
    *   - hash: a unique hash string generated from the other properties
    */
   constructor(transactions, previousHash) {
-    // Your code here
-
+    this.transactions = transactions;
+    this.previousHash = previousHash;
   }
 
   /**
@@ -60,8 +60,9 @@ class Block {
    *   properties change.
    */
   calculateHash(nonce) {
-    // Your code here
-
+    const properties = this.transactions + this.previousHash + nonce;
+    this.nonce = nonce;
+    this.hash = createHash('sha512').update(properties).digest('hex');
   }
 }
 

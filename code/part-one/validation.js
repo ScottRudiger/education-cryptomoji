@@ -1,7 +1,7 @@
 'use strict';
 
 const { createHash } = require('crypto');
-const signing = require('./signing');
+const { verify } = require('./signing');
 
 /**
  * A simple validation function for transactions. Accepts a transaction
@@ -10,10 +10,11 @@ const signing = require('./signing');
  *   - were improperly signed
  *   - have been modified since signing
  */
-const isValidTransaction = transaction => {
-  // Enter your solution here
-
-};
+const isValidTransaction = ({source, recipient, amount, signature}) => verify(
+  source,
+  source + recipient + amount,
+  signature,
+) && amount >= 0;
 
 /**
  * Validation function for blocks. Accepts a block and returns true or false.

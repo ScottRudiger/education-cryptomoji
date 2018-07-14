@@ -3,6 +3,9 @@
 const { createHash } = require('crypto');
 const { getPublicKey, sign } = require('./signing');
 
+const sha512 = msg => createHash('sha512').update(msg).digest('hex');
+
+const getSignatures = transactions => transactions.map(tx => tx.signature).join``;
 
 /**
  * A simple signed Transaction class for sending funds from the signer to
@@ -48,6 +51,7 @@ class Block {
   constructor(transactions, previousHash) {
     this.transactions = transactions;
     this.previousHash = previousHash;
+    this.calculateHash(0);
   }
 
   /**
@@ -60,9 +64,9 @@ class Block {
    *   properties change.
    */
   calculateHash(nonce) {
-    const properties = this.transactions + this.previousHash + nonce;
+    const {transactions, previousHash} = this;
     this.nonce = nonce;
-    this.hash = createHash('sha512').update(properties).digest('hex');
+    this.hash = sha512(previousHash + getSignatures(transactions) + nonce);
   }
 }
 
@@ -126,5 +130,7 @@ class Blockchain {
 module.exports = {
   Transaction,
   Block,
-  Blockchain
+  Blockchain,
+  sha512,
+  getSignatures,
 };

@@ -2,6 +2,7 @@
 
 const { createHash } = require('crypto');
 const { verify } = require('./signing');
+const { Block, sha512, getSignatures } = require('./blockchain');
 
 /**
  * A simple validation function for transactions. Accepts a transaction
@@ -22,35 +23,31 @@ const isValidTransaction = ({source, recipient, amount, signature}) => verify(
  *   - their hash or any other properties were altered
  *   - they contain any invalid transactions
  */
-const isValidBlock = block => {
-  // Your code here
+const isValidBlock = ({transactions: txs, nonce, hash, previousHash}) =>
+  txs.every(isValidTransaction)
+  && hash === sha512(previousHash + getSignatures(txs) + nonce);
 
-};
 
 /**
  * One more validation function. Accepts a blockchain, and returns true
  * or false. It should reject any blockchain that:
- *   - is a missing genesis block
+ *   - is missing a genesis block
  *   - has any block besides genesis with a null hash
  *   - has any block besides genesis with a previousHash that does not match
  *     the previous hash
  *   - contains any invalid blocks
  *   - contains any invalid transactions
  */
-const isValidChain = blockchain => {
-  // Your code here
-
-};
+const isValidChain = ({blocks: [genesis, ...blocks]}) => blocks.every(isValidBlock)
+  && genesis.previousHash === null
+  && blocks.every(({previousHash}, i) => previousHash === [genesis, ...blocks][i].hash);
 
 /**
  * This last one is just for fun. Become a hacker and tamper with the passed in
  * blockchain, mutating it for your own nefarious purposes. This should
  * (in theory) make the blockchain fail later validation checks;
  */
-const breakChain = blockchain => {
-  // Your code here
-
-};
+const breakChain = ({blocks: [genesis]}) => genesis.previousHash = 0;
 
 module.exports = {
   isValidTransaction,

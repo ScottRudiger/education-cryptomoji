@@ -1,3 +1,5 @@
+import stringify from 'json-stable-stringify';
+
 /**
  * A function that takes an object and returns it encoded as a JSON Buffer.
  * Should work identically to the processor version. Feel free to copy and
@@ -13,10 +15,7 @@
  *   deterministically! JSON is convenient, but you will need to sort
  *   your object's keys or random transactions may fail.
  */
-export const encode = object => {
-  // Enter your solution here
-
-};
+export const encode = object => Buffer.from(stringify(object));
 
 /**
  * A function that takes a base64 string and decodes it into an object. This is
@@ -27,7 +26,4 @@ export const encode = object => {
  *   any binary data as a base64 string. You will need to go from
  *   base64 string -> Buffer -> JSON string -> object
  */
-export const decode = base64Str => {
-  // Your code here
-
-};
+export const decode = base64Str => JSON.parse(Buffer.from(base64Str, 'base64').toString());

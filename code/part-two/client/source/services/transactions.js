@@ -14,6 +14,11 @@ const FAMILY_NAME = 'cryptomoji';
 const FAMILY_VERSION = '0.1';
 const NAMESPACE = '5f4d76';
 
+const sha512 = msg => createHash('sha512').update(msg).digest('hex');
+
+// Returns a random 1-12 character string
+const getNonce = () => (Math.random() * 10 ** 18).toString(36);
+
 /**
  * A function that takes a private key and a payload and returns a new
  * signed Transaction instance.
@@ -28,8 +33,23 @@ const NAMESPACE = '5f4d76';
  *   Also, don't forget to encode your payload!
  */
 export const createTransaction = (privateKey, payload) => {
-  // Enter your solution here
-
+  const publicKey = getPublicKey(privateKey);
+  const encodedPayload = encode(payload);
+  const header = TransactionHeader.encode({
+    signerPublicKey: publicKey,
+    batcherPublicKey: publicKey,
+    familyName: FAMILY_NAME,
+    familyVersion: FAMILY_VERSION,
+    inputs: [NAMESPACE],
+    output: [NAMESPACE],
+    payloadSha512: sha512(encodedPayload),
+    nonce: getNonce(),
+  }).finish();
+  return Transaction.create({
+    header,
+    headerSignature: sign(privateKey, header),
+    payload: encodedPayload,
+  });
 };
 
 /**
@@ -40,8 +60,17 @@ export const createTransaction = (privateKey, payload) => {
  * transaction with no array.
  */
 export const createBatch = (privateKey, transactions) => {
-  // Your code here
-
+  transactions = Array.isArray(transactions) ? transactions : [transactions];
+  const publicKey = getPublicKey(privateKey);
+  const header = BatchHeader.encode({
+    signerPublicKey: publicKey,
+    transactionIds: transactions.map(({headerSignature}) => headerSignature),
+  }).finish();
+  return Batch.create({
+    header,
+    headerSignature: sign(privateKey, header),
+    transactions,
+  });
 };
 
 /**
@@ -73,6 +102,7 @@ export const encodeBatches = batches => {
  * multiple payloads in an array.
  */
 export const encodeAll = (privateKey, payloads) => {
-  // Your code here
-
+  payloads = Array.isArray(payloads) ? payloads : [payloads];
+  const transactions = payloads.map(payload => createTransaction(privateKey, payload));
+  return encodeBatches(createBatch(privateKey, transactions));
 };

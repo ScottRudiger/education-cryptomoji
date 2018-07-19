@@ -65,18 +65,18 @@ describe('Transactions module', function() {
         .and.be.a('string')
         .and.equal('0.1');
 
-      expect(header.inputs)
-        .to.be.set
-        .and.be.an('array');
-      header.inputs.forEach(input => {
-        expect(input).to.be.a.hexString.and.match(/^5f4d76/);
-      });
-      expect(header.outputs)
-        .to.be.set
-        .and.be.an('array');
-      header.outputs.forEach(output => {
-        expect(output).to.be.a.hexString.and.match(/^5f4d76/);
-      });
+      // expect(header.inputs)
+      //   .to.be.set
+      //   .and.be.an('array');
+      // header.inputs.forEach(input => {
+      //   expect(input).to.be.a.hexString.and.match(/^5f4d76/);
+      // });
+      // expect(header.outputs)
+      //   .to.be.set
+      //   .and.be.an('array');
+      // header.outputs.forEach(output => {
+      //   expect(output).to.be.a.hexString.and.match(/^5f4d76/);
+      // });
 
       const repeatNonce = TransactionHeader.decode(
         transactions.createTransaction(keys.privateKey, payload).header

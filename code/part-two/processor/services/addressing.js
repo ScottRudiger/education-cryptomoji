@@ -2,6 +2,7 @@
 
 const { createHash } = require('crypto');
 
+const sha512 = msg => createHash('sha512').update(msg).digest('hex');
 
 const NAMESPACE = '5f4d76';
 const PREFIXES = {
@@ -23,28 +24,22 @@ const PREFIXES = {
  *   console.log(address);
  *   // '5f4d7600ecd7ef459ec82a01211983551c3ed82169ca5fa0703ec98e17f9b534ffb797'
  */
-const getCollectionAddress = publicKey => {
-  // Enter your solution here
-
-};
+const getCollectionAddress = publicKey => NAMESPACE + PREFIXES.COLLECTION
+  + sha512(publicKey).slice(0, 62);
 
 /**
  * A function that takes a public key and a moji dna string, returning the
  * corresponding moji address.
  */
-const getMojiAddress = (ownerKey, dna) => {
-  // Your code here
-
-};
+const getMojiAddress = (ownerKey, dna) => NAMESPACE + PREFIXES.MOJI
+  + sha512(ownerKey).slice(0, 8) + sha512(dna).slice(0, 54);
 
 /**
  * A function that takes a public key, and returns the corresponding sire
  * listing address.
  */
-const getSireAddress = ownerKey => {
-  // Your code here
-
-};
+const getSireAddress = ownerKey => NAMESPACE + PREFIXES.SIRE_LISTING
+  + sha512(ownerKey).slice(0, 62);
 
 /**
  * EXTRA CREDIT
@@ -57,10 +52,9 @@ const getSireAddress = ownerKey => {
  * Unlike the client version, moji may only be identified by addresses, not
  * dna strings.
  */
-const getOfferAddress = (ownerKey, addresses) => {
-  // Your code here
-
-};
+const getOfferAddress = (ownerKey, addresses) => NAMESPACE + PREFIXES.OFFER
+  + sha512(ownerKey).slice(0, 8)
+  + sha512(Array.isArray(addresses) ? addresses.sort().join`` : addresses).slice(0, 54);
 
 /**
  * A function that takes an address and returns true or false depending on
@@ -74,10 +68,7 @@ const getOfferAddress = (ownerKey, addresses) => {
  *   const isValid = isValidAddress('00000000');
  *   console.log(isValid);  // false
  */
-const isValidAddress = address => {
-  // Your code here
-
-};
+const isValidAddress = address => RegExp(`^${NAMESPACE}[\\da-f]{64}$`, 'i').test(address);
 
 module.exports = {
   getCollectionAddress,

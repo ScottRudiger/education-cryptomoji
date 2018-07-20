@@ -14,7 +14,7 @@ const FAMILY_NAME = 'cryptomoji';
 const FAMILY_VERSION = '0.1';
 const NAMESPACE = '5f4d76';
 
-const sha512 = msg => createHash('sha512').update(msg).digest('hex');
+export const sha512 = msg => createHash('sha512').update(msg).digest('hex');
 
 // Returns a random 1-12 character string
 const getNonce = () => (Math.random() * 10 ** 18).toString(36);

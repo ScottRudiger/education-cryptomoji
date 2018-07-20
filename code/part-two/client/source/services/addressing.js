@@ -1,5 +1,4 @@
-import { createHash } from 'crypto';
-
+import { sha512 } from './transactions';
 
 const NAMESPACE = '5f4d76';
 const PREFIXES = {
@@ -24,10 +23,8 @@ const PREFIXES = {
  *   console.log(address);
  *   // '5f4d7600ecd7ef459ec82a01211983551c3ed82169ca5fa0703ec98e17f9b534ffb797'
  */
-export const getCollectionAddress = (publicKey = null) => {
-  // Enter your solution here
-
-};
+export const getCollectionAddress = (publicKey = null) => NAMESPACE + PREFIXES.COLLECTION
+  + (publicKey ? sha512(publicKey).slice(0, 62) : '');
 
 /**
  * A function which optionally takes a public key and moji dna, returning
@@ -41,10 +38,8 @@ export const getCollectionAddress = (publicKey = null) => {
  *   const ownerPrefix = getMojiAddress(publicKey);
  *   console.log(ownerPrefix);  // '5f4d7601ecd7ef45'
  */
-export const getMojiAddress = (ownerKey = null, dna = null) => {
-  // Your code here
-
-};
+export const getMojiAddress = (ownerKey = null, dna = null) => NAMESPACE + PREFIXES.MOJI
+  + (ownerKey ? sha512(ownerKey).slice(0, 8) : '') + (dna ? sha512(dna).slice(0, 54) : '');
 
 /**
  * A function which optionally takes a public key, and returns a full or
@@ -53,10 +48,8 @@ export const getMojiAddress = (ownerKey = null, dna = null) => {
  * If the public key is omitted, returns just the sire listing prefix,
  * otherwise returns the full address.
  */
-export const getSireAddress = (ownerKey = null) => {
-  // Your code here
-
-};
+export const getSireAddress = (ownerKey = null) => NAMESPACE + PREFIXES.SIRE_LISTING
+  + (ownerKey ? sha512(ownerKey).slice(0, 62) : '');
 
 /**
  * EXTRA CREDIT
@@ -70,7 +63,6 @@ export const getSireAddress = (ownerKey = null) => {
  * If key or identifiers are omitted, returns just the offer prefix.
  * The identifiers may be either moji dna, or moji addresses.
  */
-export const getOfferAddress = (ownerKey = null, moji = null) => {
-  // Your code here
-
-};
+export const getOfferAddress = (ownerKey = null, moji = null) => NAMESPACE + PREFIXES.OFFER
+  + (ownerKey ? sha512(ownerKey).slice(0, 8) : '')
+  + (moji ? sha512(Array.isArray(moji) ? moji.sort().join`` : moji).slice(0, 54) : '');
